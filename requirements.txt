@@ -151,7 +151,6 @@ python-multipart==0.0.20
 python-telegram-bot==20.4
 pytweening==1.0.7
 pytz==2025.1
-pywin32==306
 pywin32-ctypes==0.2.3
 PyYAML==6.0.2
 qrcode==8.0
