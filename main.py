@@ -23,7 +23,13 @@ chat_client = StreamChat(api_key=STREAM_API_KEY, api_secret=STREAM_API_SECRET)
 
 app = FastAPI()
 
+@app.get("/")  # This should respond at "https://your-api.onrender.com/"
+def read_root():
+    return {"message": "Backend is running!"}
 
+@app.get("/ping")  # Optional health check
+def ping():
+    return {"status": "OK"}
 @app.get("/token")
 def generate_token(user_id: str = Query(...)):
     token = chat_client.create_token(user_id)
