@@ -1,6 +1,5 @@
 from fastapi import FastAPI, Query
 from stream_chat import StreamChat
-import openai
 import os
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -21,7 +20,6 @@ STREAM_API_SECRET = "3es4893mzf6m64mjj59pmzznhvta895ur297dpuet3g449aky22q9fhunwe
 OPENAI_API_KEY = "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"
 
 chat_client = StreamChat(api_key=STREAM_API_KEY, api_secret=STREAM_API_SECRET)
-openai.api_key = OPENAI_API_KEY
 
 app = FastAPI()
 
