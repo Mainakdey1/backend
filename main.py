@@ -50,18 +50,33 @@ logging.basicConfig(level=logging.DEBUG)
 async def stream_webhook(event: dict):
     logging.debug(f"Received event: {event}")
 
-    if event["type"] == "message.new" and event["user"]["id"] != "ai-bot":
-        user_message = event["message"]["text"]
+    # ✅ Use .get() to avoid KeyErrors
+    event_type = event.get("type")
+    user_info = event.get("user", {})
+    message_info = event.get("message", {})
+
+    # ✅ Validate event before processing
+    if event_type == "message.new" and user_info.get("id") != "ai-bot":
+        user_message = message_info.get("text", "")
         logging.debug(f"User message: {user_message}")
 
+        if not user_message:
+            logging.debug("No message text found, skipping response.")
+            return {"status": "no_message"}
+
+        # ✅ Call AI response function
         ai_reply = await ai_response({"text": user_message})
 
+        # ✅ Log AI response before sending
         logging.debug(f"AI Reply: {ai_reply}")
 
+        # ✅ Send AI response to chat
         chat_client.channel("messaging", "ai-bot").send_message({
-            "text": ai_reply["reply"],
-            "user_id": "ai-bot"
+            "text": ai_reply.get("reply", "I'm sorry, I couldn't generate a response."),
+            "user": {"id": "ai-bot"}  # ✅ Correct format
         })
+
+        logging.debug("AI response sent successfully.")
 
     return {"status": "ok"}
 
