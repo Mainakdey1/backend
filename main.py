@@ -33,11 +33,16 @@ def ping():
 @app.get("/token")
 def generate_token(user_id: str = Query(...)):
     token = chat_client.create_token(user_id)
-    response = {"token": token}
-    response.headers["Access-Control-Allow-Origin"] = "*"
-    response.headers["Access-Control-Allow-Methods"] = "GET, OPTIONS"
-    response.headers["Access-Control-Allow-Headers"] = "*"
-    return response
+
+
+    return JSONResponse(
+        content={"token": token},
+        headers={
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "GET, OPTIONS",
+            "Access-Control-Allow-Headers": "*",
+        }
+    )
 
 @app.post("/ai-response")
 async def ai_response(message: dict):
