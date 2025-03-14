@@ -2,7 +2,7 @@ from fastapi import FastAPI, Query
 from stream_chat import StreamChat
 import os
 from fastapi.middleware.cors import CORSMiddleware
-
+from fastapi.responses import JSONResponse
 app = FastAPI()
 
 
@@ -49,34 +49,38 @@ logging.basicConfig(level=logging.DEBUG)
 @app.post("/webhook")
 async def stream_webhook(event: dict):
     logging.debug(f"Received event: {event}")
+    try:
 
-    # ✅ Use .get() to avoid KeyErrors
-    event_type = event.get("type")
-    user_info = event.get("user", {})
-    message_info = event.get("message", {})
+        event_type = event.get("type")
+        user_info = event.get("user", {})
+        message_info = event.get("message", {})
 
-    # ✅ Validate event before processing
-    if event_type == "message.new" and user_info.get("id") != "ai-bot":
-        user_message = message_info.get("text", "")
-        logging.debug(f"User message: {user_message}")
+        if event_type == "message.new" and user_info.get("id") != "ai-bot":
+            user_message = message_info.get("text", "")
+            logging.debug(f"User message: {user_message}")
 
-        if not user_message:
-            logging.debug("No message text found, skipping response.")
-            return {"status": "no_message"}
+            if not user_message:
+                logging.debug("No message text found, skipping response.")
+                return JSONResponse(content={"status": "no_message"}, status_code=200)
 
-        # ✅ Call AI response function
-        ai_reply = await ai_response({"text": user_message})
+            ai_reply = await ai_response({"text": user_message})
 
-        # ✅ Log AI response before sending
-        logging.debug(f"AI Reply: {ai_reply}")
+            logging.debug(f"AI Reply: {ai_reply}")
 
-        # ✅ Send AI response to chat
-        chat_client.channel("messaging", "ai-bot").send_message({
-            "text": ai_reply.get("reply", "I'm sorry, I couldn't generate a response."),
-            "user": {"id": "ai-bot"}  # ✅ Correct format
-        })
 
-        logging.debug("AI response sent successfully.")
+            channel = chat_client.channel("messaging", "ai-bot")
+            channel.send_message(
+            {
+                "text": ai_reply.get("reply", "I'm sorry, I couldn't generate a response."),
+            },
+            user_id="ai-bot"  
+            )
 
-    return {"status": "ok"}
 
+            logging.debug("AI response sent successfully.")
+        
+        return JSONResponse(content={"status": "ok"}, status_code=200)
+
+    except Exception as e:
+        logging.error(f"Error processing webhook: {e}")
+        return JSONResponse(content={"status": "error", "message": str(e)}, status_code=200)
