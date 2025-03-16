@@ -3,6 +3,9 @@ from stream_chat import StreamChat
 import os
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+genai.configure(api_key="AIzaSyARPfwxQtYEGy_AWPwgI97cR5CmI-bkwNA")
+model = genai.GenerativeModel("models/gemini-1.5-pro-latest")
+app = FastAPI()
 app = FastAPI()
 
 
@@ -47,8 +50,8 @@ def generate_token(user_id: str = Query(...)):
 @app.post("/ai-response")
 async def ai_response(message: dict):
     user_message = message.get("text", "")
-
-    return {"reply": user_message}
+    response = model.generate_content(user_message)
+    return {"reply": response.text}
 
 import logging
 
