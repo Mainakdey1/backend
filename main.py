@@ -3,6 +3,7 @@ from stream_chat import StreamChat
 import os
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+import google.generativeai as genai
 genai.configure(api_key="AIzaSyARPfwxQtYEGy_AWPwgI97cR5CmI-bkwNA")
 model = genai.GenerativeModel("models/gemini-1.5-pro-latest")
 app = FastAPI()
