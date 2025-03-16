@@ -10,6 +10,8 @@ app = FastAPI()
 app = FastAPI()
 
 
+__version__ = 0.1
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173","https://getstream.io", "https://frontend-tka5.onrender.com"],  # Frontend URL
@@ -67,7 +69,7 @@ async def stream_webhook(event: dict):
         user_info = event.get("user", {})
         message_info = event.get("message", {})
 
-        if event_type == "message.new" and user_info.get("id") != "ai-bot":
+        if event_type == "message.new" and user_info.get("id") != "Jeremy":
             user_message = message_info.get("text", "")
             logging.debug(f"User message: {user_message}")
 
@@ -80,12 +82,12 @@ async def stream_webhook(event: dict):
             logging.debug(f"AI Reply: {ai_reply}")
 
 
-            channel = chat_client.channel("messaging", "ai-bot")
+            channel = chat_client.channel("messaging", "Jeremy")
             channel.send_message(
             {
                 "text": ai_reply.get("reply", "I'm sorry, I couldn't generate a response."),
             },
-            user_id="ai-bot"  
+            user_id="Jeremy"  
             )
 
 
