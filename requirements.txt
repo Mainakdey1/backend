@@ -5,3 +5,4 @@ stream-chat==4.23.0
 stream-python==5.3.1
 streamlit==1.37.1
 libclang==18.1.1
+google.generativeai
