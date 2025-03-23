@@ -53,7 +53,8 @@ def generate_token(user_id: str = Query(...)):
 @app.post("/ai-response")
 async def ai_response(message: dict):
     user_message = message.get("text", "")
-
+    response = model.generate_content(user_message)
+    return {"reply": response.text}
 
 import logging
 
