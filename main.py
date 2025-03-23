@@ -16,8 +16,8 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173","https://getstream.io", "https://frontend-tka5.onrender.com"],  # Frontend URL
     allow_credentials=True,
-    allow_methods=["*"],  # Allow all HTTP methods
-    allow_headers=["*"],  # Allow all headers
+    allow_methods=["*"], 
+    allow_headers=["*"],  
 )
 
 STREAM_API_KEY = "bknpx6eut9sj"
@@ -29,11 +29,11 @@ chat_client = StreamChat(api_key=STREAM_API_KEY, api_secret=STREAM_API_SECRET)
 
 app = FastAPI()
 
-@app.get("/")  # This should respond at "https://your-api.onrender.com/"
+@app.get("/")  
 def read_root():
     return {"message": "Backend is running!"}
 
-@app.get("/ping")  # Optional health check
+@app.get("/ping") 
 def ping():
     return {"status": "OK"}
 @app.get("/token")
@@ -53,8 +53,7 @@ def generate_token(user_id: str = Query(...)):
 @app.post("/ai-response")
 async def ai_response(message: dict):
     user_message = message.get("text", "")
-    response = model.generate_content(user_message)
-    return {"reply": response.text}
+
 
 import logging
 
